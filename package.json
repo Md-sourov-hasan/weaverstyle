@@ -1,0 +1,14 @@
+{
+  "name": "weaver-style",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node init && vite --port 5173",
+    "start": "node init && vite --port 5173",
+    "build": "node init && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

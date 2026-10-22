@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEAVER STYLE - Premium Apparel & Admin System</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1E293B',
+                            900: '#0F172A',
+                            950: '#080D1A',
+                        },
+                        amber: {
+                            500: '#F59E0B',
+                            600: '#D97706',
+                        },
+                        bkash: '#D12053',
+                        nagad: '#F7931E',
+                        rocket: '#8C3494',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- DOMAIN SIMULATION BAR -->
+    <div id="domain-bar" class="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 flex items-center justify-between border-b border-slate-800 z-50 sticky top-0 shadow-sm">
+        <div class="flex items-center space-x-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-slate-400 font-mono hidden sm:inline">Status: Live</span>
+            <span class="text-slate-500">|</span>
+            <i class="fa-solid fa-lock text-emerald-400 text-[10px]"></i>
+            <span class="font-mono text-white font-semibold">https://www.weaverstyle.com</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <span class="hidden md:inline text-slate-400 text-[11px]">Server: BD-Dhaka-01 (100% Operational)</span>
+            <button onclick="toggleAdminView()" id="nav-admin-toggle-btn" class="bg-amber-500 hover:bg-amber-600 text-slate-900 px-3 py-1 rounded font-bold text-[11px] transition flex items-center gap-1.5 shadow active:scale-95">
+                <i class="fa-solid fa-user-shield"></i> <span id="admin-btn-text">Switch to Admin Panel</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app" class="flex-1 flex flex-col">
+        <!-- Notification Toast Container -->
+        <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+        <!-- ================================================================= -->
+        <!-- USER STOREFRONT VIEW                                              -->
+        <!-- ================================================================= -->
+        <div id="storefront-view" class="flex-1 flex flex-col">
+            
+            <!-- HEADER / NAVIGATION -->
+            <header class="bg-navy-900 text-white sticky top-[33px] z-40 shadow-lg">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-20 gap-4">
+                        
+                        <!-- Logo -->
+                        <div class="flex-shrink-0 cursor-pointer flex items-center gap-2" onclick="switchCategory('All')">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center text-navy-900 font-extrabold text-xl shadow">
+                                WS
+                            </div>
+                            <div>
+                                <h1 class="text-xl sm:text-2xl font-black tracking-wider text-white">WEAVER<span class="text-amber-500">STYLE</span></h1>
+                                <p class="text-[10px] text-slate-400 tracking-widest uppercase font-medium">Premium Wear BD</p>
+                            </div>
+                        </div>
+
+                        <!-- Search Bar -->
+                        <div class="flex-1 max-w-md hidden md:block">
+                            <div class="relative">
+                                <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Search T-Shirts, Polos, Sleeveless Ganjis..." class="w-full bg-slate-800 text-white placeholder-slate-400 rounded-full py-2.5 pl-10 pr-4 text-sm border border-slate-700 focus:outline-none focus:border-amber-500 transition">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- Right Header Actions -->
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <!-- Hotline info -->
+                            <div class="hidden lg:flex flex-col text-right pr-3 border-r border-slate-700">
+                                <span class="text-[10px] text-slate-400">Order Hotline:</span>
+                                <a href="tel:01700000000" class="text-xs font-bold text-amber-500 hover:underline"><i class="fa-solid fa-phone text-[10px] mr-1"></i>01700-000000</a>
+                            </div>
+
+                            <!-- Mobile Search Button -->
+                            <button onclick="toggleMobileSearch()" class="md:hidden bg-slate-800 hover:bg-slate-700 p-2.5 rounded-full text-white transition flex items-center justify-center border border-slate-700">
+                                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                            </button>
+
+                            <!-- Cart Button -->
+                            <button onclick="toggleCartDrawer(true)" class="relative bg-slate-800 hover:bg-slate-700 p-2.5 rounded-full text-white transition flex items-center justify-center border border-slate-700 active:scale-95">
+                                <i class="fa-solid fa-bag-shopping text-lg text-amber-400"></i>
+                                <span id="cart-badge" class="absolute -top-1 -right-1 bg-amber-500 text-navy-900 text-xs font-extrabold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mobile search bar expandable -->
+                    <div id="mobile-search-bar" class="hidden pb-3 md:hidden">
+                        <div class="relative">
+                            <input type="text" id="mobile-search-input" onkeyup="handleMobileSearch()" placeholder="Search T-Shirts, Polos, Ganjis..." class="w-full bg-slate-800 text-white placeholder-slate-400 rounded-lg py-2 pl-9 pr-3 text-xs border border-slate-700 focus:outline-none focus:border-amber-500">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-nav Categories -->
+                <div class="bg-navy-950 border-t border-slate-800/80 overflow-x-auto custom-scrollbar">
+                    <div class="max-w-7xl mx-auto px-4 flex items-center space-x-6 text-xs sm:text-sm font-medium py-2.5 whitespace-nowrap" id="category-bar">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+            </header>
+
+            <!-- HERO BANNER -->
+            <section class="bg-gradient-to-r from-navy-950 via-navy-900 to-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-amber-500/20 relative overflow-hidden">
+                <div class="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="space-y-4 max-w-xl text-center md:text-left">
+                        <span class="inline-block bg-amber-500/10 text-amber-500 font-semibold text-xs px-3 py-1 rounded-full border border-amber-500/30 uppercase tracking-widest">
+                            🔥 Premium Summer & Daily Collection 2026
+                        </span>
+                        <h2 class="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight">
+                            Elevate Your Everyday <span class="text-amber-500">Style & Comfort</span>
+                        </h2>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Discover high-density cotton T-Shirts, trendy Oversized Drop-Shoulder tees, classic Polos, and ultra-breathable Sleeveless Ganjis engineered for Bangladeshi weather.
+                        </p>
+                        <div class="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
+                            <button onclick="switchCategory('Oversized')" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold px-6 py-3 rounded-lg shadow-lg hover:shadow-amber-500/20 transition text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-fire"></i> Shop Oversized Tees
+                            </button>
+                            <button onclick="switchCategory('Ganji')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-6 py-3 rounded-lg border border-slate-700 transition text-sm">
+                                View Sleeveless Ganjis
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Decorative Showcase Cards -->
+                    <div class="grid grid-cols-2 gap-3 w-full md:w-auto max-w-sm">
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 backdrop-blur text-center space-y-1">
+                            <i class="fa-solid fa-truck-fast text-2xl text-amber-500"></i>
+                            <h4 class="font-bold text-xs">Fast BD Shipping</h4>
+                            <p class="text-[10px] text-slate-400">Dhaka in 24-48 Hours</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 backdrop-blur text-center space-y-1">
+                            <i class="fa-solid fa-shield-halved text-2xl text-amber-500"></i>
+                            <h4 class="font-bold text-xs">100% Comb Cotton</h4>
+                            <p class="text-[10px] text-slate-400">Comfort Guaranteed</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 backdrop-blur text-center space-y-1">
+                            <i class="fa-solid fa-money-bill-transfer text-2xl text-amber-500"></i>
+                            <h4 class="font-bold text-xs">Cash On Delivery</h4>
+                            <p class="text-[10px] text-slate-400">Pay After Inspection</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 backdrop-blur text-center space-y-1">
+                            <i class="fa-solid fa-mobile-retro text-2xl text-amber-500"></i>
+                            <h4 class="font-bold text-xs">bKash / Nagad</h4>
+                            <p class="text-[10px] text-slate-400">Easy Digital Payment</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRODUCT CATALOG SECTION -->
+            <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Section Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-2xl font-bold text-navy-900" id="current-category-title">Featured Products</h3>
+                            <span id="product-count-badge" class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full font-bold">0 Items</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Handcrafted quality menswear for effortless daily fashion</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-slate-500 font-medium">Filter Category:</span>
+                        <select id="category-filter-select" onchange="switchCategory(this.value)" class="bg-white text-xs border border-slate-300 rounded-lg px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            <option value="All">All Categories</option>
+                            <option value="Oversized">Oversized Tees</option>
+                            <option value="Polo">Polo T-Shirts</option>
+                            <option value="Printed">Printed Tees</option>
+                            <option value="Ganji">Sleeveless Ganjis</option>
+                            <option value="Basic">Basic Solid Tees</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Product Grid -->
+                <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 pt-6">
+                    <!-- Products dynamically rendered here -->
+                </div>
+
+                <!-- Empty Search / Filter State -->
+                <div id="empty-product-state" class="hidden py-16 text-center space-y-3">
+                    <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-2xl">
+                        <i class="fa-solid fa-shirt"></i>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-700">No products match your criteria</h4>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto">Try clearing your search query or selecting a different apparel category.</p>
+                    <button onclick="resetFilters()" class="text-xs font-semibold text-amber-600 hover:underline">Reset Filters</button>
+                </div>
+            </main>
+
+            <!-- FOOTER -->
+            <footer class="bg-navy-950 text-slate-400 text-xs border-t border-slate-800 mt-12">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded bg-amber-500 flex items-center justify-center text-navy-900 font-black">WS</div>
+                            <span class="text-lg font-bold text-white tracking-wider">WEAVER STYLE</span>
+                        </div>
+                        <p class="text-slate-400 leading-relaxed">
+                            Bangladesh's premier direct-to-consumer store for high-end T-Shirts, Drop Shoulders, and Inner Comfort Wear.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-3 uppercase tracking-wider text-xs">Customer Service</h4>
+                        <ul class="space-y-2">
+                            <li><a href="javascript:void(0)" onclick="showToast('Tracking orders available via phone: 01700-000000', 'info')" class="hover:text-amber-500 transition">Track Your Order</a></li>
+                            <li><a href="javascript:void(0)" onclick="showToast('Dhaka: ৳60 (24-48h) | Outside Dhaka: ৳120 (48-72h)', 'info')" class="hover:text-amber-500 transition">Delivery & Shipping Rates</a></li>
+                            <li><a href="javascript:void(0)" onclick="showToast('Sizes: M (38), L (40), XL (42), XXL (44)', 'info')" class="hover:text-amber-500 transition">Size Guide & Fitting</a></li>
+                            <li><a href="javascript:void(0)" onclick="showToast('Hassle-free 7-day exchange on size issues', 'info')" class="hover:text-amber-500 transition">Return Policy (7 Days)</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-3 uppercase tracking-wider text-xs">Contact & Showroom</h4>
+                        <p class="space-y-1 text-slate-400">
+                            <span>House 42, Road 11, Block D, Banani, Dhaka</span><br>
+                            <span>Phone: +880 1700-000000</span><br>
+                            <span>Email: support@weaverstyle.com</span>
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-3 uppercase tracking-wider text-xs">Accepted Payments</h4>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="px-2.5 py-1 bg-bkash text-white rounded font-bold text-[10px]">bKash</span>
+                            <span class="px-2.5 py-1 bg-nagad text-white rounded font-bold text-[10px]">Nagad</span>
+                            <span class="px-2.5 py-1 bg-rocket text-white rounded font-bold text-[10px]">Rocket</span>
+                            <span class="px-2.5 py-1 bg-slate-800 text-slate-200 border border-slate-700 rounded font-bold text-[10px]">COD</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-slate-900 py-4 text-center text-slate-500 text-[11px]">
+                    &copy; 2026 WEAVER STYLE (weaverstyle.com). All Rights Reserved. Designed for Bangladesh.
+                </div>
+            </footer>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- ADMIN PANEL VIEW                                                  -->
+        <!-- ================================================================= -->
+        <div id="admin-view" class="hidden flex-1 bg-slate-100 flex flex-col">
+            
+            <!-- Admin Header -->
+            <header class="bg-navy-900 text-white px-4 sm:px-8 py-4 shadow flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 sticky top-[33px] z-30">
+                <div class="flex items-center space-x-3">
+                    <span class="bg-amber-500 text-navy-900 px-2.5 py-1 rounded text-xs font-black tracking-widest uppercase shadow">Admin Mode</span>
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold">WEAVER STYLE Operations Console</h2>
+                        <p class="text-[11px] text-slate-400 hidden sm:block">Real-time Order Processing & Product Inventory System</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <button onclick="openProductModal()" class="bg-amber-500 hover:bg-amber-600 text-navy-900 px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1 shadow">
+                        <i class="fa-solid fa-plus"></i> Add Product
+                    </button>
+                    <button onclick="toggleAdminView()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded text-xs font-semibold border border-slate-700 transition flex items-center gap-1">
+                        <i class="fa-solid fa-store"></i> Return to Store
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+                
+                <!-- Dashboard Stat Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-1">
+                        <div class="flex items-center justify-between text-slate-500">
+                            <span class="text-xs font-bold uppercase tracking-wider">Total Sales</span>
+                            <i class="fa-solid fa-bangladeshi-taka-sign text-amber-500 text-base"></i>
+                        </div>
+                        <p class="text-2xl font-black text-navy-900" id="admin-stat-sales">৳ 0</p>
+                        <p class="text-[10px] text-emerald-600 font-medium"><i class="fa-solid fa-arrow-trend-up"></i> Confirmed & Delivered</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-1">
+                        <div class="flex items-center justify-between text-slate-500">
+                            <span class="text-xs font-bold uppercase tracking-wider">Total Orders</span>
+                            <i class="fa-solid fa-boxes-packing text-blue-500 text-base"></i>
+                        </div>
+                        <p class="text-2xl font-black text-navy-900" id="admin-stat-orders">0</p>
+                        <p class="text-[10px] text-slate-400 font-medium">Lifetime received</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-1">
+                        <div class="flex items-center justify-between text-slate-500">
+                            <span class="text-xs font-bold uppercase tracking-wider">Pending Orders</span>
+                            <i class="fa-solid fa-clock-rotate-left text-amber-500 text-base"></i>
+                        </div>
+                        <p class="text-2xl font-black text-amber-600" id="admin-stat-pending">0</p>
+                        <p class="text-[10px] text-amber-600 font-medium">Requires verification</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-1">
+                        <div class="flex items-center justify-between text-slate-500">
+                            <span class="text-xs font-bold uppercase tracking-wider">Active Products</span>
+                            <i class="fa-solid fa-shirt text-purple-500 text-base"></i>
+                        </div>
+                        <p class="text-2xl font-black text-navy-900" id="admin-stat-products">0</p>
+                        <p class="text-[10px] text-slate-400 font-medium">Live on storefront</p>
+                    </div>
+                </div>
+
+                <!-- Admin Tabs -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-slate-200 px-4 sm:px-6 pt-3 bg-slate-50">
+                        <div class="flex space-x-2 sm:space-x-4">
+                            <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="px-4 py-2.5 font-bold text-xs sm:text-sm border-b-2 border-amber-500 text-navy-900 transition flex items-center gap-2">
+                                <i class="fa-solid fa-receipt"></i> Orders Management 
+                                <span id="admin-pending-badge" class="bg-amber-100 text-amber-700 text-[10px] px-1.5 py-0.5 rounded-full font-extrabold">0</span>
+                            </button>
+                            <button onclick="switchAdminTab('products')" id="tab-btn-products" class="px-4 py-2.5 font-bold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group"></i> Inventory Products
+                            </button>
+                        </div>
+                        <div class="pb-2">
+                            <button onclick="resetDemoData()" class="text-xs text-slate-400 hover:text-amber-600 transition flex items-center gap-1" title="Reset default products and demo orders">
+                                <i class="fa-solid fa-arrows-rotate"></i> <span class="hidden sm:inline">Reset Demo Data</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ORDERS TAB CONTENT -->
+                    <div id="admin-orders-tab" class="p-4 sm:p-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                            <div class="relative w-full sm:w-72">
+                                <input type="text" id="admin-order-search" onkeyup="filterAdminOrders()" placeholder="Search order ID, name, phone..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg py-2 pl-8 pr-3 focus:outline-none focus:border-amber-500">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                            </div>
+                            <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
+                                <span class="text-xs text-slate-500">Status:</span>
+                                <select id="admin-order-status-filter" onchange="filterAdminOrders()" class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                                    <option value="All">All Statuses</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Delivered">Delivered</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Orders Table -->
+                        <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-lg">
+                            <table class="w-full text-left text-xs text-slate-700">
+                                <thead class="bg-slate-100 text-slate-600 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">Order ID</th>
+                                        <th class="p-3">Customer & Phone</th>
+                                        <th class="p-3">Delivery Address</th>
+                                        <th class="p-3">Items</th>
+                                        <th class="p-3">Total Amount</th>
+                                        <th class="p-3">Payment</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-orders-table-body" class="divide-y divide-slate-100">
+                                    <!-- Rendered dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCTS TAB CONTENT -->
+                    <div id="admin-products-tab" class="hidden p-4 sm:p-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                            <div class="relative w-full sm:w-72">
+                                <input type="text" id="admin-product-search" onkeyup="filterAdminProducts()" placeholder="Search product name, category..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg py-2 pl-8 pr-3 focus:outline-none focus:border-amber-500">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                            </div>
+                            <button onclick="openProductModal()" class="bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
+                                <i class="fa-solid fa-plus text-amber-500"></i> New Product
+                            </button>
+                        </div>
+
+                        <!-- Product Inventory Table -->
+                        <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-lg">
+                            <table class="w-full text-left text-xs text-slate-700">
+                                <thead class="bg-slate-100 text-slate-600 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">Product</th>
+                                        <th class="p-3">Category</th>
+                                        <th class="p-3">Price</th>
+                                        <th class="p-3">Sizes</th>
+                                        <th class="p-3">Stock Status</th>
+                                        <th class="p-3 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-products-table-body" class="divide-y divide-slate-100">
+                                    <!-- Rendered dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODALS & DRAWERS                                                  -->
+    <!-- ================================================================= -->
+
+    <!-- CART SLIDE-OVER DRAWER -->
+    <div id="cart-drawer-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleCartDrawer(false)"></div>
+    <div id="cart-drawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Drawer Header -->
+        <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-navy-900 text-white">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-bag-shopping text-amber-400"></i>
+                <h3 class="font-bold text-sm tracking-wide">Your Shopping Bag</h3>
+                <span id="cart-drawer-count" class="bg-amber-500 text-navy-900 font-extrabold text-[10px] px-2 py-0.5 rounded-full">0</span>
+            </div>
+            <button onclick="toggleCartDrawer(false)" class="text-slate-400 hover:text-white transition text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items List -->
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- Drawer Footer & Checkout -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50 space-y-3">
+            <!-- Delivery Zone Selection -->
+            <div class="space-y-1">
+                <label class="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Select Delivery Location:</label>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <label class="flex items-center gap-1.5 p-2 bg-white border border-slate-300 rounded-lg cursor-pointer hover:border-amber-500">
+                        <input type="radio" name="drawer_delivery" value="60" checked onchange="updateDeliveryCharge(60)" class="text-amber-500 focus:ring-amber-500">
+                        <span>Inside Dhaka (৳60)</span>
+                    </label>
+                    <label class="flex items-center gap-1.5 p-2 bg-white border border-slate-300 rounded-lg cursor-pointer hover:border-amber-500">
+                        <input type="radio" name="drawer_delivery" value="120" onchange="updateDeliveryCharge(120)" class="text-amber-500 focus:ring-amber-500">
+                        <span>Outside Dhaka (৳120)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Coupon Input -->
+            <div class="flex gap-2">
+                <input type="text" id="coupon-code-input" placeholder="Promo code (Try WS10)" class="flex-1 text-xs uppercase bg-white border border-slate-300 rounded-lg px-3 py-1.5 focus:outline-none focus:border-amber-500">
+                <button onclick="applyCoupon()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition">Apply</button>
+            </div>
+            <div id="coupon-applied-message" class="text-[11px] font-semibold text-emerald-600 hidden"></div>
+
+            <!-- Price Breakdown -->
+            <div class="space-y-1 text-xs pt-1 border-t border-slate-200">
+                <div class="flex justify-between text-slate-500">
+                    <span>Subtotal:</span>
+                    <span id="cart-subtotal" class="font-bold text-slate-800">৳ 0</span>
+                </div>
+                <div class="flex justify-between text-slate-500">
+                    <span>Delivery Charge:</span>
+                    <span id="cart-delivery" class="font-bold text-slate-800">৳ 60</span>
+                </div>
+                <div id="discount-row" class="hidden justify-between text-emerald-600 font-medium">
+                    <span>Promo Discount:</span>
+                    <span id="cart-discount">-৳ 0</span>
+                </div>
+                <div class="flex justify-between text-sm font-extrabold text-navy-900 pt-1 border-t border-slate-200">
+                    <span>Estimated Total:</span>
+                    <span id="cart-total" class="text-amber-600">৳ 60</span>
+                </div>
+            </div>
+
+            <!-- Checkout CTA -->
+            <button onclick="openCheckoutModal()" id="btn-proceed-checkout" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-900 font-extrabold py-3 rounded-lg shadow-lg hover:shadow-amber-500/20 transition flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:pointer-events-none">
+                <i class="fa-solid fa-lock text-xs"></i> Proceed to Order (৳ COD / bKash)
+            </button>
+        </div>
+    </div>
+
+    <!-- QUICK VIEW MODAL -->
+    <div id="quick-view-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-fade-in custom-scrollbar">
+            <button onclick="closeQuickView()" class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="quick-view-content" class="p-6">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkout-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-fade-in custom-scrollbar">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-slate-200 bg-navy-900 text-white rounded-t-2xl flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-truck-fast text-amber-400"></i>
+                    <h3 class="font-bold text-sm">Express Bangladeshi Checkout</h3>
+                </div>
+                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form onsubmit="handlePlaceOrder(event)" class="p-5 space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700">Full Name *</label>
+                    <input type="text" id="order-name" required placeholder="e.g. Shakib Al Hasan" class="w-full text-xs border border-slate-300 rounded-lg p-2.5 focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700">Phone Number (11 Digits) *</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-mono">+88</span>
+                        <input type="tel" id="order-phone" required pattern="^01[3-9][0-9]{8}$" placeholder="01712345678" class="w-full text-xs border border-slate-300 rounded-lg py-2.5 pl-12 pr-3 focus:outline-none focus:border-amber-500 font-mono">
+                    </div>
+                    <p class="text-[10px] text-slate-400">We will call this number to verify your parcel delivery.</p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700">Full Delivery Address *</label>
+                    <textarea id="order-address" required rows="2" placeholder="House #, Road #, Area / Thana, City" class="w-full text-xs border border-slate-300 rounded-lg p-2.5 focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700">Delivery Zone *</label>
+                    <select id="order-zone" onchange="updateDeliveryChargeFromCheckout(this.value)" class="w-full text-xs border border-slate-300 rounded-lg p-2.5 focus:outline-none focus:border-amber-500 font-medium">
+                        <option value="60">Inside Dhaka (৳60) - 24 to 48 Hours</option>
+                        <option value="120">Outside Dhaka (৳120) - 48 to 72 Hours</option>
+                    </select>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-700">Select Payment Method *</label>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="border border-amber-500 bg-amber-50/40 p-2.5 rounded-lg flex items-center gap-2 cursor-pointer transition" onclick="selectPaymentMethod('COD')">
+                            <input type="radio" name="payment_method" value="Cash On Delivery" checked class="text-amber-500">
+                            <div>
+                                <span class="font-bold block text-slate-800">Cash on Delivery</span>
+                                <span class="text-[10px] text-slate-500">Pay after parcel check</span>
+                            </div>
+                        </label>
+                        <label class="border border-slate-200 p-2.5 rounded-lg flex items-center gap-2 cursor-pointer transition hover:border-bkash" onclick="selectPaymentMethod('bKash')">
+                            <input type="radio" name="payment_method" value="bKash" class="text-bkash">
+                            <div>
+                                <span class="font-bold block text-bkash">bKash Personal</span>
+                                <span class="text-[10px] text-slate-500">Send money 01700-000000</span>
+                            </div>
+                        </label>
+                        <label class="border border-slate-200 p-2.5 rounded-lg flex items-center gap-2 cursor-pointer transition hover:border-nagad" onclick="selectPaymentMethod('Nagad')">
+                            <input type="radio" name="payment_method" value="Nagad" class="text-nagad">
+                            <div>
+                                <span class="font-bold block text-nagad">Nagad Personal</span>
+                                <span class="text-[10px] text-slate-500">Send money 01700-000000</span>
+                            </div>
+                        </label>
+                        <label class="border border-slate-200 p-2.5 rounded-lg flex items-center gap-2 cursor-pointer transition hover:border-rocket" onclick="selectPaymentMethod('Rocket')">
+                            <input type="radio" name="payment_method" value="Rocket" class="text-rocket">
+                            <div>
+                                <span class="font-bold block text-rocket">Rocket Wallet</span>
+                                <span class="text-[10px] text-slate-500">Send money 01700-000000</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Digital Wallet TrxID input (hidden by default) -->
+                    <div id="trx-id-wrapper" class="hidden p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                        <span class="text-[11px] font-bold text-slate-700">Digital Payment TrxID (Optional/Simulated):</span>
+                        <input type="text" id="order-trxid" placeholder="e.g. 9B77XC92A" class="w-full text-xs uppercase bg-white border border-slate-300 rounded px-2.5 py-1.5 font-mono">
+                    </div>
+                </div>
+
+                <!-- Order Final Summary -->
+                <div class="bg-slate-50 p-3 rounded-lg text-xs space-y-1 border border-slate-200">
+                    <div class="flex justify-between text-slate-600">
+                        <span>Items:</span>
+                        <span id="checkout-summary-items" class="font-bold">0 Items</span>
+                    </div>
+                    <div class="flex justify-between text-slate-600">
+                        <span>Delivery:</span>
+                        <span id="checkout-summary-delivery" class="font-bold">৳ 60</span>
+                    </div>
+                    <div class="flex justify-between text-sm font-extrabold text-navy-900 pt-1 border-t border-slate-200">
+                        <span>Total Payable:</span>
+                        <span id="checkout-summary-total" class="text-amber-600">৳ 0</span>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-submit-order" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-900 font-extrabold py-3 rounded-lg shadow-lg hover:shadow-amber-500/20 transition text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check"></i> Place Confirm Order
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ORDER SUCCESS CONFIRMATION MODAL -->
+    <div id="order-success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl animate-fade-in">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-3xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <span class="text-xs uppercase font-extrabold text-amber-600 tracking-wider">Order Received Successfully!</span>
+                <h3 class="text-xl font-black text-navy-900 mt-1">Thank You For Choosing Weaver Style</h3>
+                <p class="text-xs text-slate-500 mt-1">Your order tracking number is <span id="success-order-id" class="font-mono font-bold text-navy-900">#WS-1001</span></p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl text-left text-xs space-y-1 border border-slate-200">
+                <div class="flex justify-between"><span class="text-slate-500">Recipient:</span> <span id="success-order-name" class="font-semibold text-slate-800"></span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Phone:</span> <span id="success-order-phone" class="font-semibold text-slate-800 font-mono"></span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Payment:</span> <span id="success-order-payment" class="font-semibold text-slate-800"></span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Amount:</span> <span id="success-order-amount" class="font-extrabold text-amber-600"></span></div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="closeSuccessModalAndShop()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 rounded-lg text-xs transition">
+                    Continue Shopping
+                </button>
+                <button onclick="viewPlacedOrderInAdmin()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-2.5 rounded-lg text-xs transition shadow">
+                    View in Admin
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT PRODUCT MODAL (ADMIN) -->
+    <div id="product-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-fade-in custom-scrollbar">
+            <div class="p-4 border-b border-slate-200 bg-navy-900 text-white rounded-t-2xl flex items-center justify-between">
+                <h3 class="font-bold text-sm" id="product-modal-title">Add New Product</h3>
+                <button onclick="closeProductModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="handleSaveProduct(event)" class="p-5 space-y-3 text-xs">
+                <input type="hidden" id="modal-product-id">
+                
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-700">Product Title *</label>
+                    <input type="text" id="modal-product-title" required placeholder="e.g. Heavyweight Acid Wash Oversized Tee" class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="font-bold text-slate-700">Category *</label>
+                        <select id="modal-product-category" required class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                            <option value="Oversized">Oversized</option>
+                            <option value="Polo">Polo</option>
+                            <option value="Printed">Printed</option>
+                            <option value="Ganji">Ganji</option>
+                            <option value="Basic">Basic</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="font-bold text-slate-700">Fabric / GSM *</label>
+                        <input type="text" id="modal-product-fabric" required placeholder="e.g. 220 GSM 100% Cotton" class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="font-bold text-slate-700">Selling Price (৳) *</label>
+                        <input type="number" id="modal-product-price" required min="1" placeholder="750" class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="font-bold text-slate-700">Original Price (৳) *</label>
+                        <input type="number" id="modal-product-oldprice" required min="1" placeholder="950" class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-700">Image URL *</label>
+                    <input type="url" id="modal-product-image" required placeholder="https://images.unsplash.com/..." class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                    <div class="flex items-center gap-1.5 pt-1 text-[10px] text-slate-500">
+                        <span>Presets:</span>
+                        <button type="button" onclick="setPresetImage('oversized')" class="underline text-amber-600 hover:text-amber-700">Oversized</button>
+                        <span>•</span>
+                        <button type="button" onclick="setPresetImage('polo')" class="underline text-amber-600 hover:text-amber-700">Polo</button>
+                        <span>•</span>
+                        <button type="button" onclick="setPresetImage('printed')" class="underline text-amber-600 hover:text-amber-700">Graphic</button>
+                        <span>•</span>
+                        <button type="button" onclick="setPresetImage('ganji')" class="underline text-amber-600 hover:text-amber-700">Ganji</button>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-700">Description</label>
+                    <textarea id="modal-product-desc" rows="2" placeholder="Brief apparel product details..." class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+
+                <div class="flex items-center gap-4 pt-1">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="modal-product-instock" checked class="rounded text-amber-500">
+                        <span class="font-bold text-slate-700">In Stock</span>
+                    </label>
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeProductModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded-lg transition">Cancel</button>
+                    <button type="submit" class="flex-1 bg-amber-500 hover:bg-amber-600 text-navy-900 font-extrabold py-2 rounded-lg transition shadow">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- INVOICE / ORDER DETAIL MODAL (ADMIN) -->
+    <div id="invoice-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 relative animate-fade-in custom-scrollbar" id="invoice-printable-area">
+            <button onclick="closeInvoiceModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="invoice-content" class="space-y-4">
+                <!-- Dynamically populated invoice -->
+            </div>
+            <div class="flex gap-2 pt-4 border-t border-slate-200 mt-4 print:hidden">
+                <button onclick="window.print()" class="flex-1 bg-navy-900 hover:bg-navy-800 text-white font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i> Print Invoice
+                </button>
+                <button onclick="closeInvoiceModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-lg text-xs transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- APPLICATION JAVASCRIPT LOGIC                                      -->
+    <!-- ================================================================= -->
+    <script>
+        // -------------------------------------------------------------
+        // DEFAULT INITIAL MOCK DATA
+        // -------------------------------------------------------------
+        const DEFAULT_PRODUCTS = [
+            {
+                id: "WS-P01",
+                title: "Heavyweight Acid Wash Drop-Shoulder Tee",
+                category: "Oversized",
+                price: 750,
+                oldPrice: 950,
+                fabric: "240 GSM Combed Cotton",
+                image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80",
+                sizes: ["M", "L", "XL", "XXL"],
+                inStock: true,
+                rating: 4.9,
+                reviews: 86,
+                description: "Premium acid-washed drop-shoulder fit engineered with dense 240 GSM pre-shrunk cotton for maximum streetwear aesthetic and summer comfort."
+            },
+            {
+                id: "WS-P02",
+                title: "Classic Pique Knit Luxury Polo Shirt",
+                category: "Polo",
+                price: 850,
+                oldPrice: 1100,
+                fabric: "220 GSM Double Pique Cotton",
+                image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=800&auto=format&fit=crop&q=80",
+                sizes: ["M", "L", "XL", "XXL"],
+                inStock: true,
+                rating: 4.8,
+                reviews: 124,
+                description: "Executive collar polo made from double-knit combed pique yarn. Features mother-of-pearl buttons and ribbed sleeve bands."
+            },
+            {
+                id: "WS-P03",
+                title: "Tokyo Cyberpunk Graphic Heavyweight Tee",
+                category: "Printed",
+                price: 699,
+                oldPrice: 899,
+                fabric: "210 GSM Compact Cotton",
+                image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&auto=format&fit=crop&q=80",
+                sizes: ["M", "L", "XL"],
+                inStock: true,
+                rating: 5.0,
+                reviews: 64,
+                description: "High-density Japanese plastisol print on 100% compact cotton. Vibrant colors tested to resist fading through 50+ wash cycles."
+            },
+            {
+                id: "WS-P04",
+                title: "Ribbed Muscle-Fit Gym Sleeveless Ganji",
+                category: "Ganji",
+                price: 390,
+                oldPrice: 499,
+                fabric: "200 GSM 2x1 Ribbed Cotton",
+                image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&auto=format&fit=crop&q=80",
+                sizes: ["M", "L", "XL"],
+                inStock: true,
+                rating: 4.7,
+                reviews: 92,
+                description: "Designed for intense workouts and high-humidity Bangladeshi weather. 4-way stretch ribbed cotton contours your physique while remaining ultra-breathable."
+            },
+            {
+                id: "WS-P05",
+                title: "Minimalist 220 GSM Solid Heavy Tee - Off White",
+                category: "Basic",
+                price: 550,
+                oldPrice: 699,
+                fabric: "220 GSM Organic Cotton",
+                image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&auto=format&fit=crop&q=80",
+                sizes: ["M", "L", "XL", "XXL"],
+                inStock: true,
+                rating: 4.9,
+                reviews: 153,
+                description: "Clean, timeless, and substantial. Our signature solid heavyweight tee is bio-washed for extreme softness without losing its crisp structure."
+            },
+            {
+                id: "WS-P06",
+                title: "Vintage Boulevard Oversized Street Tee",
+                category: "Oversized",
+                price: 790,
+                oldPrice: 999,
+                fabric: "230 GSM Heavyweight Terry",
+                image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&auto=format&fit=crop&q=80",
+                sizes: ["M", "L", "XL", "XXL"],
+                inStock: true,
+                rating: 4.8,
+                reviews: 42,
+                description: "Boxy relaxed silhouette with reinforced crewneck collar that never sags. Perfect everyday statement piece."
+            },
+            {
+                id: "WS-P07",
+                title: "Monogram Collar Premium Cotton Polo",
+                category: "Polo",
+                price: 950,
+                oldPrice: 1250,
+                fabric: "230 GSM Mercerized Cotton",
+                image: "https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=800&auto=format&fit=crop&q=80",
+                sizes: ["M", "L", "XL"],
+                inStock: true,
+                rating: 4.9,
+                reviews: 78,
+                description: "Silk-feel mercerized cotton with jacquard monogram collar. The peak of casual luxury menswear."
+            },
+            {
+                id: "WS-P08",
+                title: "Ultra-Cool Breathable Cotton Ganji - Jet Black",
+                category: "Ganji",
+                price: 380,
+                oldPrice: 480,
+                fabric: "190 GSM Soft Combed Cotton",
+                image: "https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=800&auto=format&fit=crop&q=80",
+                sizes: ["M", "L", "XL"],
+                inStock: true,
+                rating: 4.8,
+                reviews: 110,
+                description: "Tagless comfort cut sleeveless tank top. Absorbs perspiration instantly, making it the perfect inner wear or lounger."
+            }
+        ];
+
+        const DEFAULT_ORDERS = [
+            {
+                id: "WS-9101",
+                date: "2026-10-21 18:30",
+                name: "Tanvir Ahmed",
+                phone: "01712345678",
+                address: "House 14, Road 7, Sector 3, Uttara, Dhaka",
+                zone: "60",
+                items: [
+                    { id: "WS-P01", title: "Heavyweight Acid Wash Tee", size: "L", price: 750, qty: 1 },
+                    { id: "WS-P04", title: "Ribbed Muscle-Fit Ganji", size: "M", price: 390, qty: 2 }
+                ],
+                subtotal: 1530,
+                deliveryFee: 60,
+                discount: 0,
+                total: 1590,
+                paymentMethod: "bKash",
+                trxId: "9B77XC92A",
+                status: "Confirmed"
+            },
+            {
+                id: "WS-9102",
+                date: "2026-10-22 09:15",
+                name: "Sazzad Hossain",
+                phone: "01823456789",
+                address: "Flat 4B, Green Villa, Agrabad C/A, Chittagong",
+                zone: "120",
+                items: [
+                    { id: "WS-P02", title: "Classic Pique Knit Polo", size: "XL", price: 850, qty: 1 }
+                ],
+                subtotal: 850,
+                deliveryFee: 120,
+                discount: 85,
+                total: 885,
+                paymentMethod: "Cash On Delivery",
+                trxId: "",
+                status: "Pending"
+            },
+            {
+                id: "WS-9103",
+                date: "2026-10-22 10:05",
+                name: "Mahfuzur Rahman",
+                phone: "01934567890",
+                address: "Road 11, Block D, Banani, Dhaka",
+                zone: "60",
+                items: [
+                    { id: "WS-P03", title: "Tokyo Cyberpunk Graphic Tee", size: "L", price: 699, qty: 1 },
+                    { id: "WS-P05", title: "Minimalist Solid Heavy Tee", size: "L", price: 550, qty: 1 }
+                ],
+                subtotal: 1249,
+                deliveryFee: 60,
+                discount: 0,
+                total: 1309,
+                paymentMethod: "Cash On Delivery",
+                trxId: "",
+                status: "Shipped"
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // STATE STORAGE & INITIALIZATION
+        // -------------------------------------------------------------
+        let products = JSON.parse(localStorage.getItem('ws_products')) || DEFAULT_PRODUCTS;
+        let orders = JSON.parse(localStorage.getItem('ws_orders')) || DEFAULT_ORDERS;
+        let cart = JSON.parse(localStorage.getItem('ws_cart')) || [];
+        let currentCategory = 'All';
+        let searchQuery = '';
+        let deliveryCharge = 60;
+        let couponDiscount = 0;
+        let appliedCouponCode = '';
+
+        function persistData() {
+            localStorage.setItem('ws_products', JSON.stringify(products));
+            localStorage.setItem('ws_orders', JSON.stringify(orders));
+            localStorage.setItem('ws_cart', JSON.stringify(cart));
+            updateBadgesAndStats();
+        }
+
+        // -------------------------------------------------------------
+        // CATEGORY NAV DATA
+        // -------------------------------------------------------------
+        const CATEGORIES = [
+            { name: "All", icon: "fa-border-all" },
+            { name: "Oversized", icon: "fa-shirt" },
+            { name: "Polo", icon: "fa-vest-patches" },
+            { name: "Printed", icon: "fa-palette" },
+            { name: "Ganji", icon: "fa-person" },
+            { name: "Basic", icon: "fa-circle-check" }
+        ];
+
+        function renderCategoryBar() {
+            const bar = document.getElementById('category-bar');
+            if (!bar) return;
+            bar.innerHTML = CATEGORIES.map(cat => `
+                <button onclick="switchCategory('${cat.name}')" class="category-pill transition flex items-center gap-1.5 pb-1 border-b-2 ${currentCategory === cat.name ? 'border-amber-500 text-amber-500 font-bold' : 'border-transparent text-slate-300 hover:text-white'}">
+                    <i class="fa-solid ${cat.icon} text-xs"></i>
+                    <span>${cat.name === 'All' ? 'All Collection' : cat.name + ' Tees'}</span>
+                </button>
+            `).join('');
+            
+            const select = document.getElementById('category-filter-select');
+            if (select) select.value = currentCategory;
+        }
+
+        function switchCategory(cat) {
+            currentCategory = cat;
+            const titleElem = document.getElementById('current-category-title');
+            if (titleElem) {
+                titleElem.innerText = cat === 'All' ? 'Featured Collection' : `${cat} Apparel`;
+            }
+            renderCategoryBar();
+            renderStorefrontProducts();
+        }
+
+        function resetFilters() {
+            currentCategory = 'All';
+            searchQuery = '';
+            const searchInput = document.getElementById('search-input');
+            const mobileInput = document.getElementById('mobile-search-input');
+            if (searchInput) searchInput.value = '';
+            if (mobileInput) mobileInput.value = '';
+            switchCategory('All');
+        }
+
+        // -------------------------------------------------------------
+        // STOREFRONT PRODUCT RENDERING
+        // -------------------------------------------------------------
+        function renderStorefrontProducts() {
+            const grid = document.getElementById('product-grid');
+            const emptyState = document.getElementById('empty-product-state');
+            const badgeCount = document.getElementById('product-count-badge');
+            if (!grid) return;
+
+            let filtered = products.filter(p => {
+                const matchesCategory = currentCategory === 'All' || p.category === currentCategory;
+                const matchesSearch = searchQuery === '' || 
+                    p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    p.fabric.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            if (badgeCount) badgeCount.innerText = `${filtered.length} Items`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                if (emptyState) emptyState.classList.remove('hidden');
+                return;
+            }
+
+            if (emptyState) emptyState.classList.add('hidden');
+
+            grid.innerHTML = filtered.map(p => {
+                const discountPercent = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+                return `
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-lg transition-all duration-300 group">
+                    <!-- Image Box -->
+                    <div class="relative overflow-hidden aspect-[4/5] bg-slate-100 cursor-pointer" onclick="openQuickView('${p.id}')">
+                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-2 left-2 flex flex-col gap-1">
+                            <span class="bg-amber-500 text-navy-950 text-[10px] font-extrabold px-2 py-0.5 rounded shadow">
+                                -${discountPercent}% OFF
+                            </span>
+                            <span class="bg-navy-900/80 backdrop-blur text-white text-[9px] font-bold px-2 py-0.5 rounded">
+                                ${p.category}
+                            </span>
+                        </div>
+                        ${!p.inStock ? `
+                            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center">
+                                <span class="bg-rose-600 text-white font-extrabold text-xs px-3 py-1 rounded shadow">OUT OF STOCK</span>
+                            </div>
+                        ` : ''}
+                        <!-- Quick View Overlay button -->
+                        <button onclick="event.stopPropagation(); openQuickView('${p.id}')" class="absolute bottom-2 right-2 bg-white/90 hover:bg-white text-navy-900 w-8 h-8 rounded-full shadow flex items-center justify-center text-xs transition">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="p-3.5 flex-1 flex flex-col justify-between space-y-2">
+                        <div>
+                            <div class="flex items-center gap-1 text-amber-500 text-[10px]">
+                                <i class="fa-solid fa-star"></i>
+                                <span class="font-bold">${p.rating}</span>
+                                <span class="text-slate-400">(${p.reviews})</span>
+                            </div>
+                            <h4 class="font-bold text-xs sm:text-sm text-navy-900 line-clamp-2 mt-1 group-hover:text-amber-600 transition" onclick="openQuickView('${p.id}')" role="button">
+                                ${p.title}
+                            </h4>
+                            <p class="text-[10px] text-slate-500 line-clamp-1 mt-0.5">${p.fabric}</p>
+                        </div>
+
+                        <!-- Price & Cart Button -->
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                            <div>
+                                <span class="text-sm sm:text-base font-extrabold text-navy-900">৳${p.price}</span>
+                                <del class="text-[11px] text-slate-400 ml-1">৳${p.oldPrice}</del>
+                            </div>
+                            <button onclick="addToCart('${p.id}', '${p.sizes[0]}')" ${!p.inStock ? 'disabled' : ''} class="bg-navy-900 hover:bg-amber-500 hover:text-navy-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 disabled:opacity-40 disabled:pointer-events-none active:scale-95 shadow-sm">
+                                <i class="fa-solid fa-cart-plus text-xs"></i> <span>Add</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // -------------------------------------------------------------
+        // SEARCH FUNCTIONALITY
+        // -------------------------------------------------------------
+        function handleSearch() {
+            const input = document.getElementById('search-input');
+            searchQuery = input ? input.value.trim() : '';
+            renderStorefrontProducts();
+        }
+
+        function handleMobileSearch() {
+            const input = document.getElementById('mobile-search-input');
+            searchQuery = input ? input.value.trim() : '';
+            renderStorefrontProducts();
+        }
+
+        function toggleMobileSearch() {
+            const bar = document.getElementById('mobile-search-bar');
+            if (bar) bar.classList.toggle('hidden');
+        }
+
+        // -------------------------------------------------------------
+        // CART FUNCTIONALITY
+        // -------------------------------------------------------------
+        function toggleCartDrawer(open) {
+            const overlay = document.getElementById('cart-drawer-overlay');
+            const drawer = document.getElementById('cart-drawer');
+            if (!overlay || !drawer) return;
+
+            if (open) {
+                overlay.classList.remove('hidden');
+                drawer.classList.remove('translate-x-full');
+                renderCartDrawer();
+            } else {
+                drawer.classList.add('translate-x-full');
+                setTimeout(() => overlay.classList.add('hidden'), 250);
+            }
+        }
+
+        function addToCart(productId, selectedSize) {
+            const product = products.find(p => p.id === productId);
+            if (!product || !product.inStock) {
+                showToast("Product is currently out of stock!", "warning");
+                return;
+            }
+
+            const existingIndex = cart.findIndex(item => item.id === productId && item.size === selectedSize);
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image: product.image,
+                    size: selectedSize || product.sizes[0],
+                    qty: 1
+                });
+            }
+
+            persistData();
+            showToast(`Added "${product.title}" (${selectedSize || product.sizes[0]}) to cart!`, "success");
+            toggleCartDrawer(true);
+        }
+
+        function updateCartItemQty(index, delta) {
+            if (cart[index]) {
+                cart[index].qty += delta;
+                if (cart[index].qty <= 0) {
+                    cart.splice(index, 1);
+                }
+                persistData();
+                renderCartDrawer();
+            }
+        }
+
+        function removeFromCart(index) {
+            if (cart[index]) {
+                const title = cart[index].title;
+                cart.splice(index, 1);
+                persistData();
+                renderCartDrawer();
+                showToast(`Removed "${title}" from bag`, "info");
+            }
+        }
+
+        function updateDeliveryCharge(fee) {
+            deliveryCharge = Number(fee);
+            renderCartDrawer();
+        }
+
+        function applyCoupon() {
+            const input = document.getElementById('coupon-code-input');
+            const msg = document.getElementById('coupon-applied-message');
+            if (!input) return;
+            const code = input.value.trim().toUpperCase();
+
+            if (code === 'WS10') {
+                couponDiscount = 0.10;
+                appliedCouponCode = 'WS10';
+                if (msg) {
+                    msg.innerText = "✓ 10% Weaver Style Discount Applied!";
+                    msg.classList.remove('hidden');
+                }
+                showToast("Promo Code WS10 applied (10% OFF)!", "success");
+            } else if (code === 'FREESHIP') {
+                couponDiscount = 'FREE_SHIP';
+                appliedCouponCode = 'FREESHIP';
+                if (msg) {
+                    msg.innerText = "✓ Free Delivery Promo Applied!";
+                    msg.classList.remove('hidden');
+                }
+                showToast("Free Shipping promo applied!", "success");
+            } else {
+                showToast("Invalid promo code. Try 'WS10' or 'FREESHIP'", "warning");
+            }
+            renderCartDrawer();
+        }
+
+        function renderCartDrawer() {
+            const container = document.getElementById('cart-items-container');
+            const subtotalElem = document.getElementById('cart-subtotal');
+            const deliveryElem = document.getElementById('cart-delivery');
+            const totalElem = document.getElementById('cart-total');
+            const discountRow = document.getElementById('discount-row');
+            const discountElem = document.getElementById('cart-discount');
+            const drawerCount = document.getElementById('cart-drawer-count');
+            const checkoutBtn = document.getElementById('btn-proceed-checkout');
+
+            const totalItemCount = cart.reduce((sum, i) => sum + i.qty, 0);
+            if (drawerCount) drawerCount.innerText = totalItemCount;
+
+            if (cart.length === 0) {
+                if (container) {
+                    container.innerHTML = `
+                        <div class="py-16 text-center space-y-3">
+                            <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-300 flex items-center justify-center mx-auto text-2xl">
+                                <i class="fa-solid fa-basket-shopping"></i>
+                            </div>
+                            <h4 class="text-sm font-bold text-slate-700">Your bag is empty</h4>
+                            <p class="text-xs text-slate-400">Looks like you haven't added any premium tees yet.</p>
+                            <button onclick="toggleCartDrawer(false)" class="text-xs font-bold text-amber-600 hover:underline">
+                                Start Shopping
+                            </button>
+                        </div>
+                    `;
+                }
+                if (subtotalElem) subtotalElem.innerText = '৳ 0';
+                if (deliveryElem) deliveryElem.innerText = `৳ ${deliveryCharge}`;
+                if (totalElem) totalElem.innerText = '৳ 0';
+                if (discountRow) discountRow.classList.add('hidden');
+                if (checkoutBtn) checkoutBtn.disabled = true;
+                return;
+            }
+
+            if (checkoutBtn) checkoutBtn.disabled = false;
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let finalDelivery = deliveryCharge;
+            let discountAmount = 0;
+
+            if (couponDiscount === 'FREE_SHIP') {
+                finalDelivery = 0;
+            } else if (typeof couponDiscount === 'number' && couponDiscount > 0) {
+                discountAmount = Math.round(subtotal * couponDiscount);
+            }
+
+            const grandTotal = Math.max(0, subtotal + finalDelivery - discountAmount);
+
+            if (subtotalElem) subtotalElem.innerText = `৳ ${subtotal.toLocaleString()}`;
+            if (deliveryElem) deliveryElem.innerText = `৳ ${finalDelivery}`;
+            if (totalElem) totalElem.innerText = `৳ ${grandTotal.toLocaleString()}`;
+
+            if (discountRow && discountElem) {
+                if (discountAmount > 0 || couponDiscount === 'FREE_SHIP') {
+                    discountRow.classList.remove('hidden');
+                    discountRow.classList.add('flex');
+                    discountElem.innerText = discountAmount > 0 ? `-৳ ${discountAmount}` : 'Free Delivery';
+                } else {
+                    discountRow.classList.add('hidden');
+                }
+            }
+
+            if (container) {
+                container.innerHTML = cart.map((item, index) => `
+                    <div class="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <img src="${item.image}" alt="${item.title}" class="w-16 h-16 object-cover rounded-lg">
+                        <div class="flex-1 min-w-0">
+                            <h5 class="text-xs font-bold text-navy-900 truncate">${item.title}</h5>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="bg-slate-200 text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded">Size: ${item.size}</span>
+                                <span class="text-xs font-black text-amber-600">৳${item.price}</span>
+                            </div>
+                            <div class="flex items-center gap-2 mt-2">
+                                <div class="flex items-center border border-slate-300 rounded bg-white">
+                                    <button onclick="updateCartItemQty(${index}, -1)" class="w-5 h-5 flex items-center justify-center text-xs text-slate-600 hover:bg-slate-100">-</button>
+                                    <span class="w-6 text-center text-xs font-bold">${item.qty}</span>
+                                    <button onclick="updateCartItemQty(${index}, 1)" class="w-5 h-5 flex items-center justify-center text-xs text-slate-600 hover:bg-slate-100">+</button>
+                                </div>
+                                <span class="text-[11px] text-slate-500 font-medium">Total: ৳${item.price * item.qty}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-slate-400 hover:text-rose-600 transition p-1">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // -------------------------------------------------------------
+        // QUICK VIEW MODAL
+        // -------------------------------------------------------------
+        function openQuickView(productId) {
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+            const modal = document.getElementById('quick-view-modal');
+            const content = document.getElementById('quick-view-content');
+            if (!modal || !content) return;
+
+            let selectedSize = p.sizes[0];
+
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="aspect-[4/5] rounded-xl overflow-hidden bg-slate-100 shadow-inner">
+                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">${p.category} Series</span>
+                                <div class="flex items-center gap-1 text-amber-500 text-xs">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span class="font-bold">${p.rating}</span>
+                                    <span class="text-slate-400">(${p.reviews} reviews)</span>
+                                </div>
+                            </div>
+                            <h3 class="text-lg sm:text-xl font-black text-navy-900 leading-snug">${p.title}</h3>
+                            <div class="flex items-center gap-2 pt-1">
+                                <span class="text-2xl font-black text-amber-600">৳${p.price}</span>
+                                <del class="text-sm text-slate-400">৳${p.oldPrice}</del>
+                                <span class="bg-rose-100 text-rose-700 text-xs font-bold px-2 py-0.5 rounded">Save ৳${p.oldPrice - p.price}</span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed pt-2">${p.description}</p>
+                            
+                            <!-- Fabric highlight -->
+                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-1">
+                                <span class="font-bold text-navy-900 block"><i class="fa-solid fa-certificate text-amber-500 mr-1"></i> Fabric Specification:</span>
+                                <p class="text-slate-500">${p.fabric} • Pre-shrunk • Reactive dyed (No Color Bleeding)</p>
+                            </div>
+
+                            <!-- Size selection -->
+                            <div class="space-y-1.5 pt-1">
+                                <label class="text-xs font-bold text-slate-700">Select Fitting Size:</label>
+                                <div class="flex gap-2" id="quick-view-size-selector">
+                                    ${p.sizes.map(s => `
+                                        <button type="button" onclick="selectQuickViewSize('${s}')" class="size-btn px-3 py-1.5 text-xs font-bold rounded-lg border ${s === selectedSize ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-300 text-slate-700 hover:border-slate-400'}">
+                                            ${s}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3 pt-3 border-t border-slate-100">
+                            <button onclick="addToCart('${p.id}', window.currentQuickViewSize || '${p.sizes[0]}'); closeQuickView();" ${!p.inStock ? 'disabled' : ''} class="flex-1 bg-navy-900 hover:bg-navy-800 text-white font-extrabold py-3 rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-50">
+                                <i class="fa-solid fa-cart-shopping text-amber-400"></i> Add to Bag
+                            </button>
+                            <button onclick="addToCart('${p.id}', window.currentQuickViewSize || '${p.sizes[0]}'); closeQuickView(); openCheckoutModal();" ${!p.inStock ? 'disabled' : ''} class="flex-1 bg-amber-500 hover:bg-amber-600 text-navy-900 font-extrabold py-3 rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg disabled:opacity-50">
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            window.currentQuickViewSize = selectedSize;
+            modal.classList.remove('hidden');
+        }
+
+        function selectQuickViewSize(size) {
+            window.currentQuickViewSize = size;
+            const buttons = document.querySelectorAll('#quick-view-size-selector .size-btn');
+            buttons.forEach(btn => {
+                if (btn.innerText.trim() === size) {
+                    btn.className = "size-btn px-3 py-1.5 text-xs font-bold rounded-lg border border-amber-500 bg-amber-50 text-amber-700";
+                } else {
+                    btn.className = "size-btn px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-300 text-slate-700 hover:border-slate-400";
+                }
+            });
+        }
+
+        function closeQuickView() {
+            const modal = document.getElementById('quick-view-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // -------------------------------------------------------------
+        // CHECKOUT & ORDER PLACEMENT
+        // -------------------------------------------------------------
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast("Please add items to your cart first!", "warning");
+                return;
+            }
+            toggleCartDrawer(false);
+            const modal = document.getElementById('checkout-modal');
+            if (!modal) return;
+
+            const totalItemCount = cart.reduce((sum, i) => sum + i.qty, 0);
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let finalDelivery = deliveryCharge;
+            let discountAmount = 0;
+
+            if (couponDiscount === 'FREE_SHIP') {
+                finalDelivery = 0;
+            } else if (typeof couponDiscount === 'number' && couponDiscount > 0) {
+                discountAmount = Math.round(subtotal * couponDiscount);
+            }
+
+            const grandTotal = Math.max(0, subtotal + finalDelivery - discountAmount);
+
+            document.getElementById('checkout-summary-items').innerText = `${totalItemCount} Items (৳${subtotal})`;
+            document.getElementById('checkout-summary-delivery').innerText = `৳${finalDelivery}`;
+            document.getElementById('checkout-summary-total').innerText = `৳${grandTotal.toLocaleString()}`;
+            document.getElementById('order-zone').value = deliveryCharge.toString();
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function updateDeliveryChargeFromCheckout(value) {
+            deliveryCharge = Number(value);
+            // sync with drawer radio
+            const drawerRadios = document.getElementsByName('drawer_delivery');
+            drawerRadios.forEach(r => {
+                if (r.value === value) r.checked = true;
+            });
+            openCheckoutModal(); // refresh calculation
+        }
+
+        let selectedPaymentType = 'COD';
+        function selectPaymentMethod(method) {
+            selectedPaymentType = method;
+            const trxWrapper = document.getElementById('trx-id-wrapper');
+            if (trxWrapper) {
+                if (method === 'COD') {
+                    trxWrapper.classList.add('hidden');
+                } else {
+                    trxWrapper.classList.remove('hidden');
+                }
+            }
+        }
+
+        function handlePlaceOrder(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('order-name').value.trim();
+            const phone = document.getElementById('order-phone').value.trim();
+            const address = document.getElementById('order-address').value.trim();
+            const zone = document.getElementById('order-zone').value;
+            const trxId = document.getElementById('order-trxid')?.value.trim() || '';
+
+            if (!name || !phone || !address) {
+                showToast("Please fill out all required fields!", "warning");
+                return;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let finalDelivery = Number(zone);
+            let discountAmount = 0;
+
+            if (couponDiscount === 'FREE_SHIP') {
+                finalDelivery = 0;
+            } else if (typeof couponDiscount === 'number' && couponDiscount > 0) {
+                discountAmount = Math.round(subtotal * couponDiscount);
+            }
+
+            const grandTotal = Math.max(0, subtotal + finalDelivery - discountAmount);
+            const newOrderId = `WS-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            const newOrder = {
+                id: newOrderId,
+                date: dateStr,
+                name: name,
+                phone: phone,
+                address: address,
+                zone: zone,
+                items: [...cart],
+                subtotal: subtotal,
+                deliveryFee: finalDelivery,
+                discount: discountAmount,
+                total: grandTotal,
+                paymentMethod: selectedPaymentType === 'COD' ? 'Cash On Delivery' : selectedPaymentType,
+                trxId: trxId,
+                status: "Pending"
+            };
+
+            orders.unshift(newOrder);
+
+            // Clear Cart
+            cart = [];
+            persistData();
+            closeCheckoutModal();
+
+            // Show Confirmation Modal
+            const successModal = document.getElementById('order-success-modal');
+            document.getElementById('success-order-id').innerText = `#${newOrderId}`;
+            document.getElementById('success-order-name').innerText = name;
+            document.getElementById('success-order-phone').innerText = phone;
+            document.getElementById('success-order-payment').innerText = newOrder.paymentMethod;
+            document.getElementById('success-order-amount').innerText = `৳${grandTotal.toLocaleString()}`;
+
+            if (successModal) successModal.classList.remove('hidden');
+            showToast(`Order #${newOrderId} placed successfully!`, "success");
+        }
+
+        function closeSuccessModalAndShop() {
+            const successModal = document.getElementById('order-success-modal');
+            if (successModal) successModal.classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function viewPlacedOrderInAdmin() {
+            closeSuccessModalAndShop();
+            toggleAdminView();
+            switchAdminTab('orders');
+        }
+
+        // -------------------------------------------------------------
+        // ADMIN PANEL LOGIC & DASHBOARD
+        // -------------------------------------------------------------
+        let currentAdminTab = 'orders';
+
+        function toggleAdminView() {
+            const storefront = document.getElementById('storefront-view');
+            const admin = document.getElementById('admin-view');
+            const adminBtnText = document.getElementById('admin-btn-text');
+            if (!storefront || !admin) return;
+
+            if (admin.classList.contains('hidden')) {
+                admin.classList.remove('hidden');
+                storefront.classList.add('hidden');
+                if (adminBtnText) adminBtnText.innerText = 'Switch to Storefront';
+                renderAdminDashboard();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                admin.classList.add('hidden');
+                storefront.classList.remove('hidden');
+                if (adminBtnText) adminBtnText.innerText = 'Switch to Admin Panel';
+                renderStorefrontProducts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function switchAdminTab(tab) {
+            currentAdminTab = tab;
+            const ordersTab = document.getElementById('admin-orders-tab');
+            const productsTab = document.getElementById('admin-products-tab');
+            const tabBtnOrders = document.getElementById('tab-btn-orders');
+            const tabBtnProducts = document.getElementById('tab-btn-products');
+
+            if (tab === 'orders') {
+                ordersTab?.classList.remove('hidden');
+                productsTab?.classList.add('hidden');
+                tabBtnOrders?.classList.add('border-amber-500', 'text-navy-900');
+                tabBtnOrders?.classList.remove('border-transparent', 'text-slate-500');
+                tabBtnProducts?.classList.remove('border-amber-500', 'text-navy-900');
+                tabBtnProducts?.classList.add('border-transparent', 'text-slate-500');
+                renderAdminOrders();
+            } else {
+                ordersTab?.classList.add('hidden');
+                productsTab?.classList.remove('hidden');
+                tabBtnProducts?.classList.add('border-amber-500', 'text-navy-900');
+                tabBtnProducts?.classList.remove('border-transparent', 'text-slate-500');
+                tabBtnOrders?.classList.remove('border-amber-500', 'text-navy-900');
+                tabBtnOrders?.classList.add('border-transparent', 'text-slate-500');
+                renderAdminProducts();
+            }
+        }
+
+        function updateBadgesAndStats() {
+            // Cart badge
+            const cartBadge = document.getElementById('cart-badge');
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            if (cartBadge) cartBadge.innerText = count;
+
+            // Admin stats
+            const statSales = document.getElementById('admin-stat-sales');
+            const statOrders = document.getElementById('admin-stat-orders');
+            const statPending = document.getElementById('admin-stat-pending');
+            const statProducts = document.getElementById('admin-stat-products');
+            const pendingBadge = document.getElementById('admin-pending-badge');
+
+            const totalSales = orders
+                .filter(o => o.status !== 'Cancelled')
+                .reduce((sum, o) => sum + o.total, 0);
+
+            const pendingCount = orders.filter(o => o.status === 'Pending').length;
+
+            if (statSales) statSales.innerText = `৳ ${totalSales.toLocaleString()}`;
+            if (statOrders) statOrders.innerText = orders.length;
+            if (statPending) statPending.innerText = pendingCount;
+            if (statProducts) statProducts.innerText = products.length;
+            if (pendingBadge) pendingBadge.innerText = pendingCount;
+        }
+
+        function renderAdminDashboard() {
+            updateBadgesAndStats();
+            if (currentAdminTab === 'orders') {
+                renderAdminOrders();
+            } else {
+                renderAdminProducts();
+            }
+        }
+
+        function renderAdminOrders(filteredOrders = null) {
+            const tbody = document.getElementById('admin-orders-table-body');
+            if (!tbody) return;
+
+            const list = filteredOrders || orders;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">No orders found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(order => {
+                const statusColors = {
+                    Pending: "bg-amber-100 text-amber-800 border-amber-300",
+                    Confirmed: "bg-blue-100 text-blue-800 border-blue-300",
+                    Shipped: "bg-purple-100 text-purple-800 border-purple-300",
+                    Delivered: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                    Cancelled: "bg-rose-100 text-rose-800 border-rose-300"
+                };
+
+                return `
+                <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                    <td class="p-3 font-mono font-bold text-navy-900">#${order.id}</td>
+                    <td class="p-3">
+                        <div class="font-bold text-navy-900">${order.name}</div>
+                        <a href="tel:${order.phone}" class="text-[11px] text-amber-600 hover:underline font-mono">${order.phone}</a>
+                    </td>
+                    <td class="p-3 max-w-xs truncate text-[11px] text-slate-600" title="${order.address}">
+                        ${order.address}
+                    </td>
+                    <td class="p-3 text-[11px]">
+                        ${order.items.map(it => `<div>${it.qty}x ${it.title} (${it.size})</div>`).join('')}
+                    </td>
+                    <td class="p-3 font-extrabold text-navy-900">৳${order.total.toLocaleString()}</td>
+                    <td class="p-3">
+                        <span class="font-semibold text-slate-700">${order.paymentMethod}</span>
+                        ${order.trxId ? `<div class="text-[9px] text-slate-400 font-mono">Trx: ${order.trxId}</div>` : ''}
+                    </td>
+                    <td class="p-3">
+                        <select onchange="updateOrderStatus('${order.id}', this.value)" class="text-[11px] font-bold border rounded px-2 py-1 ${statusColors[order.status] || 'bg-slate-100'}">
+                            <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+                            <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                            <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                            <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </td>
+                    <td class="p-3 text-center space-x-1.5 whitespace-nowrap">
+                        <button onclick="viewInvoice('${order.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-1.5 rounded transition" title="Print Invoice">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </button>
+                        <button onclick="deleteOrder('${order.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-1.5 rounded transition" title="Delete Order">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function filterAdminOrders() {
+            const query = document.getElementById('admin-order-search')?.value.toLowerCase().trim() || '';
+            const status = document.getElementById('admin-order-status-filter')?.value || 'All';
+
+            const filtered = orders.filter(o => {
+                const matchStatus = status === 'All' || o.status === status;
+                const matchQuery = query === '' || 
+                    o.id.toLowerCase().includes(query) || 
+                    o.name.toLowerCase().includes(query) || 
+                    o.phone.includes(query) ||
+                    o.address.toLowerCase().includes(query);
+                return matchStatus && matchQuery;
+            });
+
+            renderAdminOrders(filtered);
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = newStatus;
+                persistData();
+                showToast(`Order #${orderId} marked as ${newStatus}`, "info");
+            }
+        }
+
+        function deleteOrder(orderId) {
+            if (confirm(`Are you sure you want to delete order #${orderId}?`)) {
+                orders = orders.filter(o => o.id !== orderId);
+                persistData();
+                renderAdminOrders();
+                showToast(`Order #${orderId} deleted`, "info");
+            }
+        }
+
+        // -------------------------------------------------------------
+        // ADMIN PRODUCT MANAGEMENT
+        // -------------------------------------------------------------
+        function renderAdminProducts(filteredProducts = null) {
+            const tbody = document.getElementById('admin-products-table-body');
+            if (!tbody) return;
+
+            const list = filteredProducts || products;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">No products found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(p => `
+                <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                    <td class="p-3 flex items-center gap-3">
+                        <img src="${p.image}" alt="${p.title}" class="w-10 h-10 object-cover rounded-lg border border-slate-200">
+                        <div>
+                            <div class="font-bold text-navy-900">${p.title}</div>
+                            <div class="text-[10px] text-slate-400 font-mono">${p.id} • ${p.fabric}</div>
+                        </div>
+                    </td>
+                    <td class="p-3">
+                        <span class="bg-slate-100 text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded">${p.category}</span>
+                    </td>
+                    <td class="p-3">
+                        <span class="font-extrabold text-navy-900">৳${p.price}</span>
+                        <del class="text-[10px] text-slate-400 ml-1">৳${p.oldPrice}</del>
+                    </td>
+                    <td class="p-3 text-[10px] text-slate-600">
+                        ${p.sizes.join(', ')}
+                    </td>
+                    <td class="p-3">
+                        <button onclick="toggleProductStock('${p.id}')" class="px-2 py-0.5 rounded-full text-[10px] font-bold ${p.inStock ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            ${p.inStock ? 'In Stock' : 'Out of Stock'}
+                        </button>
+                    </td>
+                    <td class="p-3 text-center space-x-1.5 whitespace-nowrap">
+                        <button onclick="editProduct('${p.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-1.5 rounded transition" title="Edit Product">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="deleteProduct('${p.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-1.5 rounded transition" title="Delete Product">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterAdminProducts() {
+            const query = document.getElementById('admin-product-search')?.value.toLowerCase().trim() || '';
+            const filtered = products.filter(p => 
+                p.title.toLowerCase().includes(query) || 
+                p.category.toLowerCase().includes(query) ||
+                p.id.toLowerCase().includes(query)
+            );
+            renderAdminProducts(filtered);
+        }
+
+        function toggleProductStock(id) {
+            const p = products.find(item => item.id === id);
+            if (p) {
+                p.inStock = !p.inStock;
+                persistData();
+                renderAdminProducts();
+                showToast(`Product "${p.title}" stock status updated!`, "info");
+            }
+        }
+
+        function deleteProduct(id) {
+            const p = products.find(item => item.id === id);
+            if (p && confirm(`Delete "${p.title}" from catalog?`)) {
+                products = products.filter(item => item.id !== id);
+                persistData();
+                renderAdminProducts();
+                renderStorefrontProducts();
+                showToast(`Product deleted successfully!`, "info");
+            }
+        }
+
+        function openProductModal(productId = null) {
+            const modal = document.getElementById('product-modal');
+            const titleElem = document.getElementById('product-modal-title');
+            if (!modal) return;
+
+            if (productId) {
+                const p = products.find(item => item.id === productId);
+                if (p) {
+                    titleElem.innerText = "Edit Product Details";
+                    document.getElementById('modal-product-id').value = p.id;
+                    document.getElementById('modal-product-title').value = p.title;
+                    document.getElementById('modal-product-category').value = p.category;
+                    document.getElementById('modal-product-fabric').value = p.fabric;
+                    document.getElementById('modal-product-price').value = p.price;
+                    document.getElementById('modal-product-oldprice').value = p.oldPrice;
+                    document.getElementById('modal-product-image').value = p.image;
+                    document.getElementById('modal-product-desc').value = p.description || '';
+                    document.getElementById('modal-product-instock').checked = p.inStock;
+                }
+            } else {
+                titleElem.innerText = "Add New Apparel Product";
+                document.getElementById('modal-product-id').value = '';
+                document.getElementById('modal-product-title').value = '';
+                document.getElementById('modal-product-category').value = 'Oversized';
+                document.getElementById('modal-product-fabric').value = '220 GSM 100% Combed Cotton';
+                document.getElementById('modal-product-price').value = '650';
+                document.getElementById('modal-product-oldprice').value = '850';
+                document.getElementById('modal-product-image').value = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80';
+                document.getElementById('modal-product-desc').value = 'Premium combed cotton tee built for Bangladeshi climate.';
+                document.getElementById('modal-product-instock').checked = true;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('product-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function editProduct(id) {
+            openProductModal(id);
+        }
+
+        function setPresetImage(type) {
+            const imgInput = document.getElementById('modal-product-image');
+            if (!imgInput) return;
+            const presets = {
+                oversized: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80",
+                polo: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=800&auto=format&fit=crop&q=80",
+                printed: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&auto=format&fit=crop&q=80",
+                ganji: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&auto=format&fit=crop&q=80"
+            };
+            if (presets[type]) imgInput.value = presets[type];
+        }
+
+        function handleSaveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('modal-product-id').value;
+            const title = document.getElementById('modal-product-title').value.trim();
+            const category = document.getElementById('modal-product-category').value;
+            const fabric = document.getElementById('modal-product-fabric').value.trim();
+            const price = Number(document.getElementById('modal-product-price').value);
+            const oldPrice = Number(document.getElementById('modal-product-oldprice').value);
+            const image = document.getElementById('modal-product-image').value.trim();
+            const desc = document.getElementById('modal-product-desc').value.trim();
+            const inStock = document.getElementById('modal-product-instock').checked;
+
+            if (id) {
+                // Update
+                const p = products.find(item => item.id === id);
+                if (p) {
+                    p.title = title;
+                    p.category = category;
+                    p.fabric = fabric;
+                    p.price = price;
+                    p.oldPrice = oldPrice;
+                    p.image = image;
+                    p.description = desc;
+                    p.inStock = inStock;
+                    showToast(`Updated "${title}"`, "success");
+                }
+            } else {
+                // Create New
+                const newProduct = {
+                    id: `WS-P${String(products.length + 1).padStart(2, '0')}`,
+                    title: title,
+                    category: category,
+                    fabric: fabric,
+                    price: price,
+                    oldPrice: oldPrice,
+                    image: image,
+                    description: desc,
+                    inStock: inStock,
+                    sizes: ["M", "L", "XL", "XXL"],
+                    rating: 5.0,
+                    reviews: 1
+                };
+                products.unshift(newProduct);
+                showToast(`New product "${title}" added!`, "success");
+            }
+
+            persistData();
+            closeProductModal();
+            renderAdminProducts();
+            renderStorefrontProducts();
+        }
+
+        // -------------------------------------------------------------
+        // INVOICE PREVIEW MODAL
+        // -------------------------------------------------------------
+        function viewInvoice(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+            const modal = document.getElementById('invoice-modal');
+            const content = document.getElementById('invoice-content');
+            if (!modal || !content) return;
+
+            content.innerHTML = `
+                <!-- Invoice Header -->
+                <div class="flex justify-between items-start border-b border-slate-200 pb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center text-navy-900 font-extrabold text-lg">WS</div>
+                        <div>
+                            <h3 class="font-black text-navy-900 tracking-wider">WEAVER STYLE</h3>
+                            <p class="text-[10px] text-slate-500">Banani, Dhaka • support@weaverstyle.com</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs uppercase font-extrabold text-amber-600 block">TAX INVOICE</span>
+                        <span class="font-mono font-bold text-sm text-navy-900">#${order.id}</span>
+                        <p class="text-[10px] text-slate-400">${order.date}</p>
+                    </div>
+                </div>
+
+                <!-- Customer Details -->
+                <div class="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <div>
+                        <span class="font-bold text-slate-700 block">Bill & Ship To:</span>
+                        <p class="font-semibold text-navy-900">${order.name}</p>
+                        <p class="text-slate-600 font-mono">${order.phone}</p>
+                        <p class="text-slate-500 text-[11px] leading-snug">${order.address}</p>
+                    </div>
+                    <div>
+                        <span class="font-bold text-slate-700 block">Order Information:</span>
+                        <p><span class="text-slate-500">Payment:</span> <span class="font-semibold">${order.paymentMethod}</span></p>
+                        ${order.trxId ? `<p><span class="text-slate-500">TrxID:</span> <span class="font-mono">${order.trxId}</span></p>` : ''}
+                        <p><span class="text-slate-500">Delivery Zone:</span> ${order.zone === '60' ? 'Inside Dhaka (৳60)' : 'Outside Dhaka (৳120)'}</p>
+                        <p><span class="text-slate-500">Current Status:</span> <span class="font-bold text-amber-600">${order.status}</span></p>
+                    </div>
+                </div>
+
+                <!-- Itemized Table -->
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-100 text-slate-600 uppercase font-bold text-[10px] border-y border-slate-200">
+                        <tr>
+                            <th class="py-2 px-3">Item Description</th>
+                            <th class="py-2 px-3 text-center">Size</th>
+                            <th class="py-2 px-3 text-center">Qty</th>
+                            <th class="py-2 px-3 text-right">Unit Price</th>
+                            <th class="py-2 px-3 text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        ${order.items.map(it => `
+                            <tr>
+                                <td class="py-2.5 px-3 font-semibold text-navy-900">${it.title}</td>
+                                <td class="py-2.5 px-3 text-center font-bold text-slate-600">${it.size}</td>
+                                <td class="py-2.5 px-3 text-center">${it.qty}</td>
+                                <td class="py-2.5 px-3 text-right">৳${it.price}</td>
+                                <td class="py-2.5 px-3 text-right font-bold text-navy-900">৳${it.price * it.qty}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <!-- Summary Breakdown -->
+                <div class="flex justify-end pt-2">
+                    <div class="w-56 space-y-1 text-xs">
+                        <div class="flex justify-between text-slate-500">
+                            <span>Subtotal:</span>
+                            <span class="font-bold text-slate-800">৳${order.subtotal}</span>
+                        </div>
+                        <div class="flex justify-between text-slate-500">
+                            <span>Delivery Fee:</span>
+                            <span class="font-bold text-slate-800">৳${order.deliveryFee}</span>
+                        </div>
+                        ${order.discount ? `
+                            <div class="flex justify-between text-emerald-600">
+                                <span>Discount:</span>
+                                <span class="font-bold">-৳${order.discount}</span>
+                            </div>
+                        ` : ''}
+                        <div class="flex justify-between text-sm font-black text-navy-900 pt-1 border-t border-slate-200">
+                            <span>Grand Total:</span>
+                            <span class="text-amber-600">৳${order.total.toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-[10px] text-slate-400 text-center pt-2">
+                    Thank you for choosing WEAVER STYLE Bangladesh. For questions, call 01700-000000.
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeInvoiceModal() {
+            const modal = document.getElementById('invoice-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // -------------------------------------------------------------
+        // RESET DEMO DATA
+        // -------------------------------------------------------------
+        function resetDemoData() {
+            if (confirm("Reset products and orders back to default demonstration values?")) {
+                products = [...DEFAULT_PRODUCTS];
+                orders = [...DEFAULT_ORDERS];
+                cart = [];
+                persistData();
+                renderCategoryBar();
+                renderStorefrontProducts();
+                renderAdminDashboard();
+                showToast("System reset to initial demo data!", "success");
+            }
+        }
+
+        // -------------------------------------------------------------
+        // TOAST NOTIFICATIONS
+        // -------------------------------------------------------------
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            const icons = {
+                success: "fa-circle-check text-emerald-500",
+                warning: "fa-triangle-exclamation text-amber-500",
+                info: "fa-circle-info text-blue-500",
+                error: "fa-circle-xmark text-rose-500"
+            };
+
+            toast.className = `pointer-events-auto bg-navy-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5 border border-slate-700 animate-fade-in`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icons[type] || icons.info} text-sm"></i>
+                <span class="font-medium">${message}</span>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // -------------------------------------------------------------
+        // INITIAL LOAD
+        // -------------------------------------------------------------
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCategoryBar();
+            renderStorefrontProducts();
+            renderCartDrawer();
+            updateBadgesAndStats();
+        });
+    </script>
+</body>
+</html>
